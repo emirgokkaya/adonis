@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayıt Takip</title>
+    {{ style('library/bootstrap/css/bootstrap.min.css') }}
+    {{ style('library/datatables/datatables.min.css') }}
+</head>
+<body>
+    <div class="container mt-5 mb-5">
+        <button type="button" class="btn btn-success mb-2 float-right" data-toggle="modal" data-target="#exampleModal">Ekle</button>
+        <table id="table_id" class="display">
+            <thead>
+                <tr>
+                    <th>Kod</th>
+                    <th>İlaç</th>
+                    <th>Adet</th>
+                    <th>Kim Aldı</th>
+                    <th>Kim İçin Aldı</th>
+                    <th>Tarih</th>
+                    <th>Açıklama</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @each(item in medicines)
+                <tr>
+                    <td>{{ item.code }}</td>
+                    <td>{{ item.medicine }}</td>
+                    <td>{{ item.piece }}</td>
+                    <td>{{ item.recipient }}</td>
+                    <td>{{ item.for_whom }}</td>
+                    <td>{{ item.date }}</td>
+                    <td>{{ item.description }}</td>
+                    <td>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateForm" onclick="dataSendModal('{{ item.id }}', '{{ item.code }}', '{{ item.medicine }}', '{{ item.piece }}', '{{ item.recipient }}', '{{ item.for_whom }}', '{{ item.date }}', '{{ item.description }}')">Düzenle</button>
+                        <form action="{{ '/' + item.id + '?_method=DELETE' }}" class="form" style="display:inline-block;" method="POST">
+                            {{ csrfField() }}
+                            <button class="btn btn-danger">Sil</button>
+                        </form>
+                    </td>
+                </tr>
+                @endeach
+            </tbody>
+        </table>
+
+        @if(medicines.length != 0)
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h3 class="text-danger border border-danger mt-5 pt-3 pb-3 text-center">Tehlikeli İşlem</h3>
+                <form action="{{ '/deleteAll' + '?_method=DELETE' }}" class="form mt-2" method="POST">
+                    {{ csrfField() }}
+                    <button class="btn btn-block float-right btn-danger">Tümünü Sil</button>
+                </form>
+            </div>
+        </div>
+        @endif
+    </div>
+
+
+
+
+
+
+    <div class="modal fade" id="updateForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Kayıt Düzenle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="update">
+                    {{ csrfField() }}
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Kod:</label>
+                        <input type="text" class="form-control" id="code2" name="code2">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">İlaç:</label>
+                        <input type="text" class="form-control" id="medicine2" name="medicine2">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Adet:</label>
+                        <input type="text" class="form-control" id="piece2" name="piece2">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Kim Aldı:</label>
+                        <input type="text" class="form-control" id="recipient2" name="recipient2">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Kim İçin Aldı:</label>
+                        <input type="text" class="form-control" id="for_whom2" name="for_whom2">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Tarih:</label>
+                        <input type="date" class="form-control" id="date2" name="date2">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Açıklama:</label>
+                        <input type="text" class="form-control" id="description2" name="description2">
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                <button type="submit" class="btn btn-primary">Güncelle</button>
+            </div>
+        </form>
+            </div>
+        </div>
+        </div>
+{{--  -----------------------------------  --}}
+   
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Kayıt Ekle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ '/medicine-add' }}" method="POST">
+                    {{ csrfField() }}
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Kod:</label>
+                        <input type="text" class="form-control" id="code" name="code" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">İlaç:</label>
+                        <input type="text" class="form-control" id="medicine" name="medicine">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Adet:</label>
+                        <input type="text" class="form-control" id="piece" name="piece">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Kim Aldı:</label>
+                        <input type="text" class="form-control" id="recipient" name="recipient">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Kim İçin Aldı:</label>
+                        <input type="text" class="form-control" id="for_whom" name="for_whom">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Tarih:</label>
+                        <input type="date" class="form-control" id="date" name="date">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Açıklama:</label>
+                        <input type="text" class="form-control" id="description" name="description">
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                <button type="submit" class="btn btn-primary">Ekle</button>
+            </div>
+        </form>
+            </div>
+        </div>
+
+
+{{--  -------------------------------------------  --}}
+
+
+
+    
+    
+    
+    {{ script('library/jquery.min.js') }}
+    {{ script('library/bootstrap/js/bootstrap.min.js') }}
+    {{ script('library/datatables/datatables.min.js') }}
+    {{ script('library/moment/moment.js') }}
+
+    <script>
+        $(document).ready( function () {
+            $('#table_id').DataTable();
+        });
+    </script>
+
+    <script>
+
+        function dataSendModal(id, code, medicine, piece, recipient, for_whom, date, description) {
+            console.log(code)
+            console.log(medicine)
+            console.log(piece)
+            console.log(recipient)
+            console.log(for_whom)
+            console.log(date)
+            console.log(description)
+
+            $('#updateForm').find('#code2').val(code);
+            $('#updateForm').find('#medicine2').val(medicine);
+            $('#updateForm').find('#piece2').val(piece);
+            $('#updateForm').find('#recipient2').val(recipient);
+            $('#updateForm').find('#for_whom2').val(for_whom);
+            $('#updateForm').find('#date2').val(moment(date).format("YYYY/MM/DD").split('/').join('-'));
+            $('#updateForm').find('#description2').val(description);
+
+            $('#update').attr('action', '/medicine-update/' + id + '?_method=PUT')
+        }
+
+        // $(document).ready(() => {
+        //     $('#dateFormat').text(moment(date).format("YYYY/MM/DD").split('/').join('-').toString())
+        // })
+
+        // $('#exampleModal').on('show.bs.modal', function (event) {
+        //     var myVal = $(event.relatedTarget).data('val');
+        //     $(this).find("#code").val(myVal);
+        // });
+    </script>
+</body>
+</html>
