@@ -9,6 +9,30 @@
     {{ style('library/datatables/datatables.min.css') }}
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">AS Ecza Deposu - Kayıt Takip</a>
+      
+        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ auth.user.username }}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <form action="{{ '/logout' }}" method="POST">
+                            {{ csrfField() }}
+                            <button type="submit" class="dropdown-item">Çıkış</a>
+                        </form>
+                    </div>
+                  </li>
+            </ul>
+        </div>
+      </nav>
+
+
+
+
+
     <div class="container mt-5 mb-5">
         <button type="button" class="btn btn-success mb-2 float-right" data-toggle="modal" data-target="#exampleModal">Ekle</button>
         <table id="table_id" class="display">
@@ -27,16 +51,58 @@
             <tbody>
                 @each(item in medicines)
                 <tr>
-                    <td>{{ item.code }}</td>
-                    <td>{{ item.medicine }}</td>
-                    <td>{{ item.piece }}</td>
-                    <td>{{ item.recipient }}</td>
-                    <td>{{ item.for_whom }}</td>
-                    <td>{{ item.date }}</td>
-                    <td>{{ item.description }}</td>
+                    <td>
+                        @if(item.code != null)
+                            {{ item.code }}
+                        @else
+                            ---
+                        @endif
+                    </td>
+                    <td>
+                        @if(item.medicine != null)
+                            {{ item.medicine }}
+                        @else
+                            ---
+                        @endif
+                    </td>
+                    <td>
+                        @if(item.piece != null)
+                            {{ item.piece }}
+                        @else
+                            ---
+                        @endif
+                    </td>
+                    <td>
+                        @if(item.recipient != null)
+                            {{ item.recipient }}
+                        @else
+                            ---
+                        @endif
+                    </td>
+                    <td>
+                        @if(item.for_whom != null)
+                            {{ item.for_whom }}
+                        @else
+                            ---
+                        @endif
+                    </td>
+                    <td>
+                        @if(item.date != null)
+                            {{ item.date }}
+                        @else
+                            ---
+                        @endif
+                    </td>
+                    <td>
+                        @if(item.description != null)
+                            {{ item.description }}
+                        @else
+                            ---
+                        @endif
+                    </td>
                     <td>
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateForm" onclick="dataSendModal('{{ item.id }}', '{{ item.code }}', '{{ item.medicine }}', '{{ item.piece }}', '{{ item.recipient }}', '{{ item.for_whom }}', '{{ item.date }}', '{{ item.description }}')">Düzenle</button>
-                        <form action="{{ '/' + item.id + '?_method=DELETE' }}" class="form" style="display:inline-block;" method="POST">
+                        <form action="{{ '/all/' + item.id + '?_method=DELETE' }}" class="form" style="display:inline-block;" method="POST">
                             {{ csrfField() }}
                             <button class="btn btn-danger">Sil</button>
                         </form>
@@ -50,7 +116,7 @@
         <div class="row">
             <div class="col-md-12 text-center">
                 <h3 class="text-danger border border-danger mt-5 pt-3 pb-3 text-center">Tehlikeli İşlem</h3>
-                <form action="{{ '/deleteAll' + '?_method=DELETE' }}" class="form mt-2" method="POST">
+                <form action="{{ '/all/deleteAll' + '?_method=DELETE' }}" class="form mt-2" method="POST">
                     {{ csrfField() }}
                     <button class="btn btn-block float-right btn-danger">Tümünü Sil</button>
                 </form>
@@ -125,7 +191,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{{ '/medicine-add' }}" method="POST">
+                <form action="{{ '/all/medicine-add' }}" method="POST">
                     {{ csrfField() }}
                     <div class="form-group">
                         <label for="recipient-name" class="col-form-label">Kod:</label>
@@ -181,38 +247,39 @@
         $(document).ready( function () {
             $('#table_id').DataTable();
         });
-    </script>
 
-    <script>
+        function dataSendModal(id, code="", medicine, piece, recipient, for_whom, date, description) {
+            
+            if(code.toString() != "null"){
+                $('#updateForm').find('#code2').val(code);
+            }
 
-        function dataSendModal(id, code, medicine, piece, recipient, for_whom, date, description) {
-            console.log(code)
-            console.log(medicine)
-            console.log(piece)
-            console.log(recipient)
-            console.log(for_whom)
-            console.log(date)
-            console.log(description)
+            if(medicine.toString() != "null"){
+                $('#updateForm').find('#medicine2').val(medicine);
+            }
 
-            $('#updateForm').find('#code2').val(code);
-            $('#updateForm').find('#medicine2').val(medicine);
-            $('#updateForm').find('#piece2').val(piece);
-            $('#updateForm').find('#recipient2').val(recipient);
-            $('#updateForm').find('#for_whom2').val(for_whom);
-            $('#updateForm').find('#date2').val(moment(date).format("YYYY/MM/DD").split('/').join('-'));
-            $('#updateForm').find('#description2').val(description);
+            if(piece.toString() != "null"){
+                $('#updateForm').find('#piece2').val(piece);
+            }
 
-            $('#update').attr('action', '/medicine-update/' + id + '?_method=PUT')
+            if(recipient.toString() != "null"){
+                $('#updateForm').find('#recipient2').val(recipient);
+            }
+
+            if(for_whom.toString() != "null"){
+                $('#updateForm').find('#for_whom2').val(for_whom);
+            }
+
+            if(date.toString() != "null"){
+                $('#updateForm').find('#date2').val(moment(date).format("YYYY/MM/DD").split('/').join('-'));
+            }
+
+            if(description.toString() != "null"){
+                $('#updateForm').find('#description2').val(description);
+            }
+
+            $('#update').attr('action', '/all/medicine-update/' + id + '?_method=PUT')
         }
-
-        // $(document).ready(() => {
-        //     $('#dateFormat').text(moment(date).format("YYYY/MM/DD").split('/').join('-').toString())
-        // })
-
-        // $('#exampleModal').on('show.bs.modal', function (event) {
-        //     var myVal = $(event.relatedTarget).data('val');
-        //     $(this).find("#code").val(myVal);
-        // });
     </script>
 </body>
 </html>

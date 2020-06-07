@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş</title>
+    <link rel="icon" href="as.png">
+    {{ style('library/bootstrap/css/bootstrap.min.css') }}
+    {{ style('library/datatables/datatables.min.css') }}
+</head>
+<body>
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="card text-center">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card-header text-center" style="background-color:#ec1929; color:white">Giriş Yap</div>
+                            <div class="card-body">
+                                <form action="{{ '/login' }}" method="POST" class="form-group mt-2" name="login">
+                                    {{ csrfField() }}
+                                    <input type="email" name="email_login" class="form-control mb-1" placeholder="E-Posta">
+                                    <input type="password" name="password_login" class="form-control mb-1" placeholder="Şifre">
+                                    <button type="submit" class="btn btn-primary" style="width: 100%">Giriş Yap</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card-header text-center" style="background-color:#322f92; color:white">Kayıt Ol</div>
+                            <div class="card-body">
+                                <form action="{{ '/register' }}" method="POST" class="form-group mt-2" name="register">
+                                    {{ csrfField() }}
+                                    <input type="text" name="username_register" class="form-control mb-1" placeholder="Kullanıcı Adı">
+                                    <input type="email" name="email_register" class="form-control mb-1" placeholder="E-Posta">
+                                    <input type="password" name="password_register" class="form-control mb-1" placeholder="Şifre">
+                                    <button type="submit" class="btn btn-primary" style="width: 100%">Kayıt Ol</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="image" src="as.png" alt="" style="width: 25%; display:block; margin-left:auto; margin-right:auto;" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {{ script('library/jquery.min.js') }}
+    {{ script('library/bootstrap/js/bootstrap.min.js') }}
+    {{ script('library/datatables/datatables.min.js') }}
+    {{ script('library/moment/moment.js') }}
+</body>
+</html>

@@ -4,15 +4,15 @@ const Medicine = use('App/Models/Medicine')
 const moment = require('../../../public/library/moment/moment')
 
 class FollowController {
-    async index({ view }) {
-        const medicines = await Medicine.all()
+    async index({ view, auth }) {
+        const medicines = await Medicine.query().where('user_id', auth.user.id).fetch()
 
         return view.render('layouts.master', {
             medicines: medicines.toJSON(),
         })
     }
 
-    async create({ request, response }) {
+    async create({ request, response, auth }) {
         const medicine = new Medicine()
 
         medicine.code = request.input('code')
@@ -22,10 +22,11 @@ class FollowController {
         medicine.for_whom = request.input('for_whom')
         medicine.date = request.input('date')
         medicine.description = request.input('description')
+        medicine.user_id = auth.user.id
 
         await medicine.save()
 
-        response.redirect('/')
+        response.redirect('/all')
     }
 
     async update({ request, response, params }) {
@@ -41,19 +42,19 @@ class FollowController {
 
         await medicine.save()
 
-        response.redirect('/')
+        response.redirect('/all')
     }
 
     async destroy({ response, params, session }) {
         const medicine = await Medicine.find(params.id)
         await medicine.delete()
-        return response.redirect('/')
+        return response.redirect('/all')
     }
 
-    async deleteAll({ view }) {
-        await Medicine.query().delete()
+    async deleteAll({ view, auth, response }) {
+        await Medicine.query().where('user_id', auth.user.id).delete()
         
-        return view.render('layouts.master')
+        return response.redirect('/all')
     }
 }
 

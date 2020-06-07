@@ -14,6 +14,8 @@ class MedicinesSchema extends Schema {
       table.string('for_whom')
       table.date('date')
       table.string('description')
+      table.integer('user_id').unsigned().index('user_id')
+      table.foreign('user_id').references('users.id').onDelete('cascade')
       table.timestamps()
     })
   }
